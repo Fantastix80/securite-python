@@ -8,15 +8,12 @@ def main():
 
     capture = Capture()
     capture.capture_trafic()
-    capture.analyse("tcp")
+    capture.analyse()
     summary = capture.get_summary()
 
     filename = "report.pdf"
     report = Report(capture, filename, summary)
-    report.generate("graph")
-    report.generate("array")
-
-    report.save(filename)
+    report.build_pdf()
 
 
 if __name__ == "__main__":

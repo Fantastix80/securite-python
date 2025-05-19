@@ -4,6 +4,11 @@ version = "0.1.0"
 description = "TP du cours 'sécurité Python' réalisé en 4ème année à l'ESGI"
 authors = ["Jean VAN WITTENBERGE", "Loïc TOSSOU"]
 readme = "README.md"
+packages = [
+  { include = "src" },
+  { include = "tp1", from = "src" },
+  { include = "tp3", from = "src" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -12,6 +17,8 @@ scapy = "^2.6.0"
 pygal = "^3.0.5"
 fpdf2 = "^2.8.1"
 pytest = "^8.3.5"
+reportlab = "^4.4.1"
+svglib = "^1.5.1"
 
 [build-system]
 requires = ["poetry-core"]
