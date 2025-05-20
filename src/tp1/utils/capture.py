@@ -1,6 +1,6 @@
 import time
 from collections import Counter, defaultdict
-from scapy.all import sniff, wrpcap, rdpcap
+from scapy.all import sniff
 from scapy.plist import PacketList, Packet
 from scapy.layers.l2 import ARP
 from src.tp1.utils.config import logger
@@ -13,7 +13,13 @@ class Capture:
         self.protocol_counts = Counter()
         self.observed_arp_table = {}
         self.arp_activity = defaultdict(list)
-        self.alerts = [{"type": "type test", "message": "Voici mon message de test !"}, {"type": "ATTAQUE DETECTEE", "message": "UNE ENORME ATTAQUE NOUS A TOUCHEE ON EST DANS LA MOUISE !"}]
+        self.alerts = [
+            {"type": "type test", "message": "Voici mon message de test !"},
+            {
+                "type": "ATTAQUE DETECTEE",
+                "message": "UNE ENORME ATTAQUE NOUS A TOUCHEE ON EST DANS LA MOUISE !",
+            },
+        ]
 
     def process_packets(self, packet: Packet) -> None:
         """
@@ -35,7 +41,6 @@ class Capture:
         sorted_protocols = sorted(self.protocol_counts.items(), key=lambda item: item[1], reverse=True)
         self.protocol_counts = sorted_protocols
 
-
     def get_all_protocols(self) -> None:
         """
         Return all protocols captured with total packets number
@@ -56,12 +61,11 @@ class Capture:
 
             if sport == 80 or dport == 80:
                 payload = packet["Raw"].load.decode(errors="ignore")
-                if ("'" in payload and ("or" in payload or "OR" in payload) and ";" in payload):
+                if "'" in payload and ("or" in payload or "OR" in payload) and ";" in payload:
                     logger.warn(f"SQL Injection détectée: {payload}")
-                    self.alerts.append({
-                        "type": "SQL Injection",
-                        "message": f"SQL Injection detected: {payload}"
-                    })
+                    self.alerts.append(
+                        {"type": "SQL Injection", "message": f"SQL Injection detected: {payload}"}
+                    )
                     # TODO: take action
 
     def detect_ARP_spoofing(self, packet: Packet) -> None:
@@ -76,11 +80,15 @@ class Capture:
 
             if ip in self.observed_arp_table:
                 if self.observed_arp_table[ip] != mac:
-                    logger.warn(f"ARP spoofing détecté: {ip} anciennement associé à {self.observed_arp_table[ip]} et maintenant {mac}")
-                    self.alerts.append({
-                        "type": "ARP Spoofing",
-                        "message": f"ARP spoofing détecté: {ip} anciennement associé à {self.observed_arp_table[ip]} et maintenant {mac}"
-                    })
+                    logger.warn(
+                        f"ARP spoofing détecté: {ip} anciennement associé à {self.observed_arp_table[ip]} et maintenant {mac}"
+                    )
+                    self.alerts.append(
+                        {
+                            "type": "ARP Spoofing",
+                            "message": f"ARP spoofing détecté: {ip} anciennement associé à {self.observed_arp_table[ip]} et maintenant {mac}",
+                        }
+                    )
                     # TODO: block the machine
             else:
                 self.observed_arp_table[ip] = mac
@@ -89,11 +97,15 @@ class Capture:
             self.arp_activity[ip] = [ts for ts in self.arp_activity[ip] if now - ts < 5]
 
             if len(self.arp_activity[ip]) > 5:
-                logger.warning(f"Activité ARP anormale: plus de 5 réponses envoyées par {ip} en moins de 5 secondes")
-                self.alerts.append({
-                    "type": "ARP Flood",
-                    "message": f"ARP flood détecté: plus de 5 réponses envoyées par {ip} en moins de 5 secondes"
-                })
+                logger.warning(
+                    f"Activité ARP anormale: plus de 5 réponses envoyées par {ip} en moins de 5 secondes"
+                )
+                self.alerts.append(
+                    {
+                        "type": "ARP Flood",
+                        "message": f"ARP flood détecté: plus de 5 réponses envoyées par {ip} en moins de 5 secondes",
+                    }
+                )
                 # TODO: block the machine
 
     def analyse(self) -> None:

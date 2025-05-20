@@ -11,4 +11,3 @@ def test_when_get_summary_then_return_summary():
 
     # Then
     assert result == string
-
