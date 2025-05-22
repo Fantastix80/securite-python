@@ -3,7 +3,9 @@ from collections import Counter, defaultdict
 from scapy.all import sniff
 from scapy.plist import PacketList, Packet
 from scapy.layers.l2 import ARP
+from scapy.layers.inet import IP
 from src.tp1.utils.config import logger
+import os
 
 
 class Capture:
@@ -67,6 +69,10 @@ class Capture:
                         {"type": "SQL Injection", "message": f"SQL Injection detected: {payload}"}
                     )
                     # TODO: take action
+                    if packet.haslayer(IP):
+                        src_ip = packet[IP].src
+                        print(f"[+] Blocage de l'IP source : {src_ip}")
+                        os.system(f"iptables -A INPUT -s {src_ip} -j DROP")
 
     def detect_ARP_spoofing(self, packet: Packet) -> None:
         """
@@ -90,6 +96,10 @@ class Capture:
                         }
                     )
                     # TODO: block the machine
+                    if packet.haslayer(IP):
+                        src_ip = packet[IP].src
+                        print(f"[+] Blocage de l'IP source : {src_ip}")
+                        os.system(f"iptables -A INPUT -s {src_ip} -j DROP")
             else:
                 self.observed_arp_table[ip] = mac
 
@@ -107,6 +117,10 @@ class Capture:
                     }
                 )
                 # TODO: block the machine
+                if packet.haslayer(IP):
+                    src_ip = packet[IP].src
+                    print(f"[+] Blocage de l'IP source : {src_ip}")
+                    os.system(f"iptables -A INPUT -s {src_ip} -j DROP")
 
     def analyse(self) -> None:
         """
