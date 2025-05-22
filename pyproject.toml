@@ -19,6 +19,8 @@ fpdf2 = "^2.8.1"
 pytest = "^8.3.5"
 reportlab = "^4.4.1"
 svglib = "^1.5.1"
+capstone = "^5.0.6"
+pylibemu = "^1.0"
 
 [build-system]
 requires = ["poetry-core"]
