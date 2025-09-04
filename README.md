@@ -1,5 +1,9 @@
 # Template code Sécurité Python
 
+## Groupe
+Loïc T.
+Jean VW.
+
 ## Description
 
 Projet contenant les modèles de TP pour le cours de sécurité Python de 4e année de l'ESGI.
